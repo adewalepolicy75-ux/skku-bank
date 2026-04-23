@@ -2,6 +2,7 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Bolt,
   Eye,
@@ -15,15 +16,30 @@ import {
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(`Welcome ${fullName}! Your account has been created.`);
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  const response = await fetch('/api/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fullName, email, phone, password })
+  });
+  
+  const data = await response.json();
+  
+  if (data.success) {
+    alert(`Account created! Your account number: ${data.user.accountNumber}`);
+    router.push('/login');
+  } else {
+    alert(data.error);
+  }
+};
 
   return (
     <>

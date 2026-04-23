@@ -11,11 +11,28 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem("isLoggedIn", "true");
-    localStorage.setItem("userEmail", email);
-    router.push("/dashboard");
+
+    const response = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userEmail", email);
+      localStorage.setItem("userName", data.user.fullName);
+      localStorage.setItem("accountNumber", data.user.accountNumber);
+      localStorage.setItem("balance", data.user.balance);
+      localStorage.setItem("userPhone", data.user.phone); // Add this line
+      router.push("/dashboard");
+    } else {
+      alert(data.error);
+    }
   };
 
   return (
