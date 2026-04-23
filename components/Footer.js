@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bolt, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Bolt, Facebook, x, Instagram, Linkedin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -124,7 +124,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               <Facebook className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
-              <Twitter className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
+              <X className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
               <Instagram className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
               <Linkedin className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
             </div>
