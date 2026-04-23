@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Bolt, Facebook, x, Instagram, Linkedin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -12,7 +11,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
-                <Bolt className="w-5 h-5 text-white" />
+                <span className="text-white font-bold text-xl">S</span>
               </div>
               <span className="font-bold text-xl text-white">skku.</span>
             </div>
@@ -117,18 +116,10 @@ export default function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-800 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm">
-              © 2024 SKKU Microfinance Bank. All rights reserved.
-            </p>
-            <div className="flex gap-4">
-              <Facebook className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
-              <X className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
-              <Instagram className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
-              <Linkedin className="w-4 h-4 cursor-pointer hover:text-blue-400 transition" />
-            </div>
-          </div>
+        <div className="border-t border-gray-800 pt-6 text-center">
+          <p className="text-sm">
+            © 2024 SKKU Microfinance Bank. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
