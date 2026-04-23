@@ -23,9 +23,25 @@ export default function TransferPage() {
     }
   }, [router]);
 
-  const handleTransfer = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+ const handleTransfer = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  
+  const currentBalance = parseFloat(localStorage.getItem("balance") || "0");
+  
+  if (currentBalance < parseFloat(amount)) {
+    alert("Insufficient balance! You don't have enough money.");
+    setLoading(false);
+    return;
+  }
+  
+  const newBalance = currentBalance - parseFloat(amount);
+  localStorage.setItem("balance", newBalance);
+  
+  alert(`Successfully sent ₦${amount} to ${toPhone}`);
+  router.push('/dashboard');
+  setLoading(false);
+};
 
     const response = await fetch("/api/transfer", {
       method: "POST",

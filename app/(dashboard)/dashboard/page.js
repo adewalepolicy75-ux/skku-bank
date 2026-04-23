@@ -22,15 +22,26 @@ export default function DashboardPage() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
-  const balance = 245500;
+  const [balance, setBalance] = useState(0);
   const accountNumber = "0123456789";
 
   useEffect(() => {
-    const userLoggedIn = localStorage.getItem("isLoggedIn");
-    if (!userLoggedIn) {
+    const savedBalance = localStorage.getItem("balance");
+    const savedName = localStorage.getItem("userName");
+    const isLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (!isLoggedIn) {
       router.push("/login");
+    }
+
+    if (savedBalance) {
+      setBalance(parseFloat(savedBalance));
     } else {
-      setIsLoggedIn(true);
+      setBalance(0); // Start with zero balance
+    }
+
+    if (savedName) {
+      setUserName(savedName);
     }
   }, [router]);
 

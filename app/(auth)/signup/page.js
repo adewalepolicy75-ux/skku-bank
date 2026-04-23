@@ -33,12 +33,13 @@ export default function SignupPage() {
   
   const data = await response.json();
   
-  if (data.success) {
-    alert(`Account created! Your account number: ${data.user.accountNumber}`);
-    router.push('/login');
-  } else {
-    alert(data.error);
-  }
+ if (data.success) {
+   localStorage.setItem("balance", "0"); // Zero balance
+   alert(
+     `Account created! Your phone number is your account: ${data.user.phone}`,
+   );
+   router.push("/login");
+ }
 };
 
   return (
