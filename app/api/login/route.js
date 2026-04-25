@@ -44,10 +44,12 @@ export async function POST(request) {
       },
     });
   } catch (error) {
+    console.error("Login error:", error);
     return Response.json(
       {
         success: false,
         error: error.message,
+        stack: error.stack,
       },
       { status: 500 },
     );

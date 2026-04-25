@@ -1,9 +1,17 @@
 "use client";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Bolt, Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import {
+  Bolt,
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,46 +19,55 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+  const users = JSON.parse(localStorage.getItem("skku_users") || "[]");
+  const user = users.find((u) => u.email === email && u.password === password);
+
+  if (user) {
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    localStorage.setItem("pendingOTP", otp);
+    localStorage.setItem("tempUserEmail", user.email);
+    localStorage.setItem("tempUserPhone", user.phone);
+    localStorage.setItem("tempUserName", user.fullName);
+    localStorage.setItem("tempUserBalance", user.balance || "0");
+    
+    const response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user.email, otp })
     });
-
-    const data = await response.json();
-
-    if (data.success) {
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("userEmail", email);
-      localStorage.setItem("userName", data.user.fullName);
-      localStorage.setItem("accountNumber", data.user.accountNumber);
-      localStorage.setItem("balance", data.user.balance);
-      localStorage.setItem("userPhone", data.user.phone); // Add this line
-      router.push("/dashboard");
+    
+    if (response.ok) {
+      router.push('/verify-otp');
     } else {
-      alert(data.error);
+      alert("Failed to send verification code.");
     }
-  };
+  } else {
+    alert("Invalid email or password!");
+  }
+};
 
   return (
     <>
       <nav className="bg-white border-b border-gray-100 py-4">
         <div className="container mx-auto px-6">
-          <Link href="/" className="flex items-center gap-2 w-fit">
-            <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
-              <Bolt className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900">skku.</span>
-          </Link>
-          <Link
-            href="/"
-            className="text-gray-500 hover:text-blue-600 transition ml-4"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
+                <Bolt className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-xl text-gray-900">skku.</span>
+            </Link>
+            <Link
+              href="/"
+              className="text-gray-500 hover:text-blue-600 transition ml-4"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </nav>
 
@@ -111,15 +128,6 @@ export default function LoginPage() {
                     )}
                   </button>
                 </div>
-              </div>
-
-              <div className="mb-6 text-right">
-                <Link
-                  href="/forgot-password"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Forgot password?
-                </Link>
               </div>
 
               <button

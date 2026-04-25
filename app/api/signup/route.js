@@ -17,18 +17,18 @@ export async function POST(request) {
       );
     }
 
-    // Create new user - phone number is the account number
+    // Create new user in MongoDB
     const newUser = {
       fullName,
       email,
       phone,
       password,
-      balance: 50000, // Starting balance for testing
+      balance: 0,
       createdAt: new Date(),
-      accountNumber: phone, // Phone number is the account number
+      accountNumber: phone,
     };
 
-    await users.insertOne(newUser);
+    const result = await users.insertOne(newUser);
 
     return Response.json({
       success: true,

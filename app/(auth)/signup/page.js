@@ -1,8 +1,8 @@
 "use client";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   Bolt,
   Eye,
@@ -12,52 +12,77 @@ import {
   User,
   Lock,
   ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 
 export default function SignupPage() {
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  const response = await fetch('/api/signup', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ fullName, email, phone, password })
-  });
-  
-  const data = await response.json();
-  
- if (data.success) {
-   localStorage.setItem("balance", "0"); // Zero balance
-   alert(
-     `Account created! Your phone number is your account: ${data.user.phone}`,
-   );
-   router.push("/login");
- }
-};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Get existing users
+    const users = JSON.parse(localStorage.getItem("skku_users") || "[]");
+
+    // Check if user exists
+    const userExists = users.find(
+      (u) => u.email === email || u.phone === phone,
+    );
+
+    if (userExists) {
+      alert("User already exists with this email or phone!");
+      return;
+    }
+
+    // Create new user
+    const newUser = {
+      fullName,
+      email,
+      phone,
+      password,
+      balance: 0,
+      createdAt: new Date().toISOString(),
+    };
+
+    users.push(newUser);
+    localStorage.setItem("skku_users", JSON.stringify(users));
+
+    // Auto login
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("userEmail", email);
+    localStorage.setItem("userName", fullName);
+    localStorage.setItem("userPhone", phone);
+    localStorage.setItem("balance", "0");
+
+    alert(
+      `Account created successfully! Your phone number ${phone} is your account number.`,
+    );
+    router.push("/dashboard");
+  };
 
   return (
     <>
       <nav className="bg-white border-b border-gray-100 py-4">
         <div className="container mx-auto px-6">
-          <Link href="/" className="flex items-center gap-2 w-fit">
-            <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
-              <Bolt className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl text-gray-900">skku.</span>
-          </Link>
-             <Link
-                      href="/"
-                      className="text-gray-500 hover:text-blue-600 transition ml-4"
-                    >
-                      <ArrowLeft className="w-5 h-5" />
-                    </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
+                <Bolt className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-xl text-gray-900">skku.</span>
+            </Link>
+            <Link
+              href="/"
+              className="text-gray-500 hover:text-blue-600 transition ml-4"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </nav>
 
