@@ -19,36 +19,25 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  const users = JSON.parse(localStorage.getItem("skku_users") || "[]");
-  const user = users.find((u) => u.email === email && u.password === password);
+    const users = JSON.parse(localStorage.getItem("skku_users") || "[]");
+    const user = users.find(
+      (u) => u.email === email && u.password === password,
+    );
 
-  if (user) {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    localStorage.setItem("pendingOTP", otp);
-    localStorage.setItem("tempUserEmail", user.email);
-    localStorage.setItem("tempUserPhone", user.phone);
-    localStorage.setItem("tempUserName", user.fullName);
-    localStorage.setItem("tempUserBalance", user.balance || "0");
-    
-    const response = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: user.email, otp })
-    });
-    
-    if (response.ok) {
-      router.push('/verify-otp');
+    if (user) {
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("userEmail", user.email);
+      localStorage.setItem("userName", user.fullName);
+      localStorage.setItem("userPhone", user.phone);
+      localStorage.setItem("balance", user.balance || "0");
+      router.push("/dashboard");
     } else {
-      alert("Failed to send verification code.");
+      alert("Invalid email or password!");
     }
-  } else {
-    alert("Invalid email or password!");
-  }
-};
+  };
 
   return (
     <>

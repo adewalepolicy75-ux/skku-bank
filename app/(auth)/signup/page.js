@@ -26,20 +26,16 @@ export default function SignupPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Get existing users
     const users = JSON.parse(localStorage.getItem("skku_users") || "[]");
-
-    // Check if user exists
     const userExists = users.find(
       (u) => u.email === email || u.phone === phone,
     );
 
     if (userExists) {
-      alert("User already exists with this email or phone!");
+      alert("User already exists!");
       return;
     }
 
-    // Create new user
     const newUser = {
       fullName,
       email,
@@ -59,9 +55,6 @@ export default function SignupPage() {
     localStorage.setItem("userPhone", phone);
     localStorage.setItem("balance", "0");
 
-    alert(
-      `Account created successfully! Your phone number ${phone} is your account number.`,
-    );
     router.push("/dashboard");
   };
 
