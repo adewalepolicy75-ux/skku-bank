@@ -70,17 +70,17 @@ export default function SignupPage() {
       <nav className="bg-white border-b border-gray-100 py-4">
         <div className="container mx-auto px-6">
           <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
-                <Bolt className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-bold text-xl text-gray-900">skku.</span>
-            </Link>
             <Link
               href="/"
               className="text-gray-500 hover:text-blue-600 transition"
             >
               <ArrowLeft className="w-5 h-5" />
+            </Link>
+            <Link href="/" className="flex items-center gap-2">
+              <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
+                <Bolt className="w-5 h-5 text-white" />
+              </div>
+              <span className="font-bold text-xl text-gray-900">skku.</span>
             </Link>
           </div>
         </div>
