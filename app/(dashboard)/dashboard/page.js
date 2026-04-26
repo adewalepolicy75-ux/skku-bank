@@ -1,5 +1,5 @@
 "use client";
-
+import BottomNav from "../../../components/BottomNav";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -22,7 +22,6 @@ import {
   X,
   Plus,
 } from "lucide-react";
-
 export default function DashboardPage() {
   const router = useRouter();
   const [showBalance, setShowBalance] = useState(true);
@@ -293,43 +292,9 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
-
-          {/* Bottom Navigation Bar (Mobile) */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 py-2 md:hidden">
-            <div className="flex justify-around items-center">
-              <Link
-                href="/dashboard"
-                className="flex flex-col items-center py-1 text-blue-600"
-              >
-                <Home className="w-5 h-5" />
-                <span className="text-xs mt-1">Home</span>
-              </Link>
-              <Link
-                href="/send"
-                className="flex flex-col items-center py-1 text-gray-500"
-              >
-                <Send className="w-5 h-5" />
-                <span className="text-xs mt-1">Send</span>
-              </Link>
-              <button className="flex flex-col items-center py-1 text-gray-500">
-                <CreditCard className="w-5 h-5" />
-                <span className="text-xs mt-1">Pay</span>
-              </button>
-              <button className="flex flex-col items-center py-1 text-gray-500">
-                <PiggyBank className="w-5 h-5" />
-                <span className="text-xs mt-1">Save</span>
-              </button>
-              <button className="flex flex-col items-center py-1 text-gray-500">
-                <Wallet className="w-5 h-5" />
-                <span className="text-xs mt-1">Account</span>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
-
-      {/* Add padding at bottom for mobile */}
-      <div className="h-16 md:hidden"></div>
-    </>
+      <BottomNav/>
+    </>     
   );
 }
