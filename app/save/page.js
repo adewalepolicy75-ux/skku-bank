@@ -3,7 +3,7 @@ import BottomNav from "../../components/BottomNav";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Bolt, ArrowLeft, PiggyBank, Target, Calendar } from "lucide-react";
+import { Bolt, Home, PiggyBank, Target, Calendar } from "lucide-react";
 
 export default function SavePage() {
   const router = useRouter();
@@ -28,7 +28,7 @@ export default function SavePage() {
               href="/dashboard"
               className="text-gray-500 hover:text-blue-600"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <Home className="w-5 h-5" />
             </Link>
           </div>
         </div>

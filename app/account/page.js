@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Bolt,
-  ArrowLeft,
+  Home,
   User,
   Mail,
   Phone,
@@ -59,7 +59,7 @@ export default function AccountPage() {
               href="/dashboard"
               className="text-gray-500 hover:text-blue-600"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <Home className="w-5 h-5" />
             </Link>
           </div>
         </div>
