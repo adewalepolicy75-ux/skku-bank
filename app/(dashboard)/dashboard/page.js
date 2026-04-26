@@ -239,12 +239,24 @@ export default function DashboardPage() {
           {/* Action Buttons - Transfer and Add Money */}
           <div className="grid grid-cols-2 gap-3 mb-8">
             <Link
-              href="/transfer"
-              className="bg-blue-600 text-white py-3 rounded-xl font-semibold text-center hover:bg-blue-700 transition flex items-center justify-center gap-2"
+              href="../transfer"
+              className="bg-blue-600 text-white py-3 rounded-xl font-semibold text-center flex items-center justify-center gap-2"
             >
               <Send className="w-4 h-4" /> Transfer
             </Link>
-            <button className="bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold text-center hover:bg-gray-200 transition flex items-center justify-center gap-2">
+            <button
+              onClick={() => {
+                const amount = prompt("Enter amount to add:", "1000");
+                if (amount) {
+                  const newBalance = balance + parseInt(amount);
+                  setBalance(newBalance);
+                  localStorage.setItem("balance", newBalance);
+                  alert(`₦${amount} added successfully!`);
+                  setLastUpdated(new Date().toLocaleString());
+                }
+              }}
+              className="bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold text-center hover:bg-gray-200 transition flex items-center justify-center gap-2"
+            >
               <Plus className="w-4 h-4" /> Add Money
             </button>
           </div>
