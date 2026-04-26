@@ -1,5 +1,5 @@
 "use client";
-
+import BottomNav from "../../components/BottomNav";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -74,6 +74,7 @@ export default function PayPage() {
           </div>
         </div>
       </div>
+      <BottomNav />
     </>
   );
 }
