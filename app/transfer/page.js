@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Bolt, Home, ArrowLeft, Building, Banknote, Globe, Loader2 } from "lucide-react";
-import BottomNav from "../components/BottomNav";
+import BottomNav from "../../components/BottomNav";
 
 const ukBanks = [
   "Barclays", "HSBC UK", "Lloyds Bank", "NatWest", 
