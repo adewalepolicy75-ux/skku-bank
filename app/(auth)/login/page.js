@@ -3,15 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import {
-  Bolt,
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  ArrowRight,
-  ArrowLeft,
-} from "lucide-react";
+import { Bolt, Eye, EyeOff, Mail, Lock, ArrowRight, ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,23 +11,26 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const users = JSON.parse(localStorage.getItem("skku_users") || "[]");
-    const user = users.find(
-      (u) => u.email === email && u.password === password,
-    );
-
-    if (user) {
+    
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    
+    const data = await response.json();
+    
+    if (data.success) {
       localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("userEmail", user.email);
-      localStorage.setItem("userName", user.fullName);
-      localStorage.setItem("userPhone", user.phone);
-      localStorage.setItem("balance", user.balance || "0");
-      router.push("/dashboard");
+      localStorage.setItem("userEmail", data.user.email);
+      localStorage.setItem("userName", data.user.fullName);
+      localStorage.setItem("userPhone", data.user.phone);
+      localStorage.setItem("balance", data.user.balance || "0");
+      router.push('/dashboard');
     } else {
-      alert("Invalid email or password!");
+      alert(data.error);
     }
   };
 
@@ -44,101 +39,54 @@ export default function LoginPage() {
       <nav className="bg-white border-b border-gray-100 py-4">
         <div className="container mx-auto px-6">
           <div className="flex justify-between items-center">
-            <Link
-              href="/"
-              className="text-gray-500 hover:text-blue-600 transition"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
             <Link href="/" className="flex items-center gap-2">
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">skku</span>
+              <span className="font-bold text-xl text-gray-900">Wire Transfer</span>
+            </Link>
+            <Link href="/" className="text-gray-500 hover:text-blue-600">
+              <ArrowLeft className="w-5 h-5" />
             </Link>
           </div>
         </div>
       </nav>
 
-      <section className="min-h-[80vh] flex items-center py-12 bg-gradient-to-br from-blue-50 via-white to-white">
+      <div className="min-h-screen flex items-center py-12 bg-gradient-to-br from-blue-50 via-white to-white">
         <div className="container mx-auto px-6">
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Welcome back
-              </h1>
-              <p className="text-gray-600">Sign in to your SKKU account</p>
+              <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
+              <p className="text-gray-600">Sign in to your Wire Transfer account</p>
             </div>
-
-            <form
-              onSubmit={handleSubmit}
-              className="bg-white rounded-2xl shadow-xl p-8"
-            >
+            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8">
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-                    placeholder="you@example.com"
-                    required
-                  />
-                </div>
+                <label className="block text-gray-700 font-semibold mb-2">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl"
+                  required
+                />
               </div>
-
               <div className="mb-6">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-                    placeholder="Enter your password"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-5 h-5 text-gray-400" />
-                    ) : (
-                      <Eye className="w-5 h-5 text-gray-400" />
-                    )}
-                  </button>
-                </div>
+                <label className="block text-gray-700 font-semibold mb-2">Password</label>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-xl"
+                  required
+                />
               </div>
-
-              <button
-                type="submit"
-                className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
-              >
-                Sign In <ArrowRight className="w-4 h-4" />
+              <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold">
+                Sign In
               </button>
-
-              <p className="text-center text-gray-600 mt-6">
-                Don't have an account?{" "}
-                <Link
-                  href="/signup"
-                  className="text-blue-600 font-semibold hover:underline"
-                >
-                  Create account
-                </Link>
-              </p>
             </form>
           </div>
         </div>
-      </section>
+      </div>
     </>
   );
 }

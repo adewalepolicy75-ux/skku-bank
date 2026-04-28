@@ -22,7 +22,7 @@ export default function SavePage() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">skku.</span>
+              <span className="font-bold text-xl text-gray-900">Wire Transfer.</span>
             </Link>
             <Link
               href="/dashboard"
@@ -44,7 +44,7 @@ export default function SavePage() {
             <p className="text-gray-600 mb-8">Start saving for your goals</p>
             <div className="bg-white rounded-2xl p-6 shadow-sm mb-4">
               <Target className="w-8 h-8 text-green-600 mx-auto mb-2" />
-              <h3 className="font-semibold">Save ₦5,000 monthly</h3>
+              <h3 className="font-semibold">Save $5,000 monthly</h3>
               <p className="text-sm text-gray-500">
                 0% interest • Flexible withdrawal
               </p>
@@ -52,7 +52,7 @@ export default function SavePage() {
             <div className="bg-white rounded-2xl p-6 shadow-sm">
               <Calendar className="w-8 h-8 text-purple-600 mx-auto mb-2" />
               <h3 className="font-semibold">Auto-save daily</h3>
-              <p className="text-sm text-gray-500">Save ₦200 every day</p>
+              <p className="text-sm text-gray-500">Save $200 every day</p>
             </div>
             <p className="text-center text-gray-500 text-sm mt-8">
               Coming soon: More saving options

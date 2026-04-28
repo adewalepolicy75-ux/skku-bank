@@ -13,7 +13,7 @@ export default function Footer() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-xl">S</span>
               </div>
-              <span className="font-bold text-xl text-white">skku.</span>
+              <span className="font-bold text-xl text-white">Wire Transfer.</span>
             </div>
             <p className="text-sm">The money app for Africans</p>
           </div>
@@ -118,7 +118,7 @@ export default function Footer() {
         {/* Divider */}
         <div className="border-t border-gray-800 pt-6 text-center">
           <p className="text-sm">
-            © 2024 SKKU Microfinance Bank. All rights reserved.
+            © 2024 Wire Transfer Microfinance Bank. All rights reserved.
           </p>
         </div>
       </div>

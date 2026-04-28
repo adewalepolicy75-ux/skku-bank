@@ -3,12 +3,15 @@ import BottomNav from "../../../components/BottomNav";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { saveTransaction } from "../../../lib/transactions";
+
 import {
   Bolt,
  
   Send,
   User,
   Coins,
+
   CheckCircle,
   Home,
 } from "lucide-react";
@@ -35,6 +38,8 @@ export default function SendMoneyPage() {
     }
   }, [router]);
 
+  
+  // Inside handleSend function, after updating balances:
   const handleSend = (e) => {
     e.preventDefault();
 
@@ -50,23 +55,19 @@ export default function SendMoneyPage() {
       return;
     }
 
-    // Get all users
-    const users = JSON.parse(localStorage.getItem("skku_users") || "[]");
+    const users = JSON.parse(localStorage.getItem("Wire Transfer_users") || "[]");
     const receiver = users.find((u) => u.phone === toPhone);
-     console.log("Users found:", users);
-     console.log("Searching for phone:", toPhone);
-     console.log("Receiver:", receiver);
+
     if (!receiver) {
-      alert("Receiver not found! Make sure the phone number is correct.");
+      alert("Receiver not found!");
       return;
     }
 
     // Update balances
     const newBalance = balance - sendAmount;
     localStorage.setItem("balance", newBalance);
-    setBalance(newBalance);
 
-    // Update receiver's balance in users array
+    // Update receiver's balance
     const updatedUsers = users.map((u) => {
       if (u.phone === toPhone) {
         return { ...u, balance: (u.balance || 0) + sendAmount };
@@ -76,7 +77,17 @@ export default function SendMoneyPage() {
       }
       return u;
     });
-    localStorage.setItem("skku_users", JSON.stringify(updatedUsers));
+    localStorage.setItem("Wire Transfer_users", JSON.stringify(updatedUsers));
+
+    // Save transaction to history
+    saveTransaction(
+      userPhone,
+      toPhone,
+      sendAmount,
+      "internal",
+      "completed",
+      `INT${Date.now()}`,
+    );
 
     setSuccess(true);
     setTimeout(() => {
@@ -95,7 +106,7 @@ export default function SendMoneyPage() {
             Transfer Successful!
           </h2>
           <p className="text-gray-600">
-            You sent ₦{amount} to {toPhone}
+            You sent ${amount} to {toPhone}
           </p>
           <p className="text-sm text-gray-500 mt-4">
             Redirecting to dashboard...
@@ -114,7 +125,7 @@ export default function SendMoneyPage() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">skku.</span>
+              <span className="font-bold text-xl text-gray-900">Wire Transfer.</span>
             </Link>
             <Link
               href="/dashboard"
@@ -135,7 +146,7 @@ export default function SendMoneyPage() {
               </div>
               <h1 className="text-2xl font-bold text-gray-900">Send Money</h1>
               <p className="text-gray-600">
-                Available balance: ₦{balance.toLocaleString()}
+                Available balance: ${balance.toLocaleString()}
               </p>
             </div>
 
@@ -162,7 +173,7 @@ export default function SendMoneyPage() {
 
               <div className="mb-6">
                 <label className="block text-gray-700 font-semibold mb-2">
-                  Amount (₦)
+                  Amount ($)
                 </label>
                 <div className="relative">
                   <Coins className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />

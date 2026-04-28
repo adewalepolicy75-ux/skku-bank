@@ -13,8 +13,8 @@ const poppins = Poppins({
 })
 
 export const metadata = {
-  title: 'SKKU Bank - The money app for Africans',
-  description: 'Save, spend, send, and invest like a pro.',
+  title: 'Wire Transfer Bank - The money app for Africans',
+  description: 'Send and receive money instantly with Wire Transfer',
 }
 
 export default function RootLayout({ children }) {

@@ -53,7 +53,7 @@ export default function AccountPage() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">skku.</span>
+              <span className="font-bold text-xl text-gray-900">Wire Transfer.</span>
             </Link>
             <Link
               href="/dashboard"
@@ -100,7 +100,7 @@ export default function AccountPage() {
                 <div>
                   <p className="text-sm text-gray-500">Balance</p>
                   <p className="font-semibold text-blue-600">
-                    ₦{user.balance.toLocaleString()}
+                    ${user.balance.toLocaleString()}
                   </p>
                 </div>
               </div>

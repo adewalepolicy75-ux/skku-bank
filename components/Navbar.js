@@ -17,7 +17,7 @@ export default function Navbar() {
               <Bolt className="w-5 h-5 text-white" />
             </div>
             <span className="font-poppins font-bold text-2xl tracking-tight text-gray-800">
-              SKKU<span className="text-purple-700">.</span>
+              Wire Transfer<span className="text-purple-700">.</span>
             </span>
           </Link>
 
@@ -49,7 +49,7 @@ export default function Navbar() {
               href="/signup"
               className="bg-purple-700 text-white px-5 py-2.5 rounded-full font-semibold text-sm shadow-md btn-cta"
             >
-              Join SKKU
+              Join Wire Transfer
             </Link>
           </div>
 
@@ -88,7 +88,7 @@ export default function Navbar() {
                 href="/signup"
                 className="flex-1 bg-purple-700 text-white rounded-full py-2.5 text-center font-medium btn-cta"
               >
-                Join SKKU
+                Join Wire Transfer
               </Link>
             </div>
           </div>

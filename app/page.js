@@ -22,7 +22,7 @@ export default function Home() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">skku.</span>
+              <span className="font-bold text-xl text-gray-900">Wire Transfer.</span>
             </div>
             <div className="hidden md:flex gap-8 text-gray-600">
               <a href="#" className="hover:text-blue-600">
@@ -49,7 +49,7 @@ export default function Home() {
                 href="/signup"
                 className="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-700"
               >
-                Join SKKU
+                Join Wire Transfer
               </Link>
             </div>
           </div>
@@ -63,14 +63,14 @@ export default function Home() {
             <div className="bg-blue-100 inline-flex items-center gap-2 rounded-full px-4 py-2 mb-6">
               <Bolt className="w-4 h-4 text-blue-600" />
               <span className="text-blue-600 text-sm font-semibold">
-                SKKU Microfinance Bank
+                Wire Transfer Microfinance Bank
               </span>
             </div>
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Get more with <span className="text-blue-600">SKKU</span>
+              Get more with <span className="text-blue-600">Wire Transfer</span>
             </h1>
             <p className="text-gray-600 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-              Earn 50 SKKU Coins on your Tier 3 SKKU account to unlock cashback,
+              Earn 50 Wire Transfer Coins on your Tier 3 Wire Transfer account to unlock cashback,
               discounts, budgeting, and more Premium rewards.
             </p>
             <div className="flex flex-wrap gap-4 justify-center mb-8">
@@ -129,7 +129,7 @@ export default function Home() {
               </div>
               <h3 className="text-xl font-bold mb-2">Rewards Program</h3>
               <p className="text-gray-600">
-                Earn SKKU Coins on every transaction.
+                Earn Wire Transfer Coins on every transaction.
               </p>
             </div>
           </div>
@@ -143,7 +143,7 @@ export default function Home() {
             Ready to get started?
           </h2>
           <p className="text-blue-100 mb-6">
-            Join over 2 million Africans using SKKU
+            Join over 2 million Africans using Wire Transfer
           </p>
           <Link
             href="/signup"
@@ -157,7 +157,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-400 py-12">
         <div className="container mx-auto px-6 text-center">
-          <p>© 2024 SKKU Microfinance Bank. All rights reserved.</p>
+          <p>© 2024 Wire Transfer Microfinance Bank. All rights reserved.</p>
           <p className="text-sm mt-2">
             By using this website you agree to our cookie policy
           </p>
