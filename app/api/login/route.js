@@ -1,18 +1,16 @@
-import { MongoClient } from "mongodb";
+import clientPromise from "@/lib/mongodb";
 
 export async function POST(request) {
   try {
     const { email, password } = await request.json();
 
-    const client = new MongoClient(process.env.MONGODB_URI);
-    await client.connect();
+    const client = await clientPromise;
     const db = client.db("wire_transfer_bank");
     const users = db.collection("users");
 
     const user = await users.findOne({ email });
 
     if (!user) {
-      await client.close();
       return Response.json(
         { success: false, error: "User not found" },
         { status: 401 },
@@ -20,14 +18,11 @@ export async function POST(request) {
     }
 
     if (user.password !== password) {
-      await client.close();
       return Response.json(
         { success: false, error: "Invalid password" },
         { status: 401 },
       );
     }
-
-    await client.close();
 
     return Response.json({
       success: true,

@@ -1,17 +1,15 @@
-import { MongoClient } from "mongodb";
+import clientPromise from "@/lib/mongodb";
 
 export async function POST(request) {
   try {
     const { fullName, email, phone, password } = await request.json();
 
-    const client = new MongoClient(process.env.MONGODB_URI);
-    await client.connect();
+    const client = await clientPromise;
     const db = client.db("wire_transfer_bank");
     const users = db.collection("users");
 
     const existingUser = await users.findOne({ $or: [{ email }, { phone }] });
     if (existingUser) {
-      await client.close();
       return Response.json(
         { success: false, error: "User already exists" },
         { status: 400 },
@@ -29,7 +27,6 @@ export async function POST(request) {
     };
 
     await users.insertOne(newUser);
-    await client.close();
 
     return Response.json({
       success: true,
