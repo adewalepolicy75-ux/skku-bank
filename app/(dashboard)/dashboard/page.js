@@ -95,7 +95,9 @@ export default function DashboardPage() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">Wire Transfer.</span>
+              <span className="font-bold text-xl text-gray-900">
+                Wire Transfer.
+              </span>
             </div>
             <div className="flex gap-8">
               <Link href="/dashboard" className="text-blue-600 font-medium">
@@ -134,7 +136,9 @@ export default function DashboardPage() {
             <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
               <Bolt className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-xl text-gray-900">Wire Transfer.</span>
+            <span className="font-bold text-xl text-gray-900">
+              Wire Transfer.
+            </span>
           </div>
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? (
@@ -184,7 +188,7 @@ export default function DashboardPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-500 text-sm">
-                    Naira Account - {accountNumber}
+                    Account - {accountNumber}
                   </span>
                   <button
                     onClick={copyAccountNumber}
@@ -224,7 +228,7 @@ export default function DashboardPage() {
               <Send className="w-4 h-4" /> Transfer
             </Link>
             <button
-              onClick={() => {
+              onClick={async () => {
                 const amount = prompt("Enter amount to add:", "1000");
                 if (amount) {
                   const addAmount = parseInt(amount);
@@ -233,29 +237,20 @@ export default function DashboardPage() {
                   );
                   const newBalance = currentBalance + addAmount;
 
+                  // Update localStorage
                   localStorage.setItem("balance", newBalance);
                   setBalance(newBalance);
 
-                  const transactions = JSON.parse(
-                    localStorage.getItem("transactions") || "[]",
-                  );
-                  const newTransaction = {
-                    id: Date.now(),
-                    date: new Date().toISOString(),
-                    fromUser: "Deposit",
-                    toUser: localStorage.getItem("userPhone"),
-                    amount: addAmount,
-                    type: "deposit",
-                    status: "completed",
-                    reference: `DEP${Date.now()}`,
-                  };
-                  transactions.unshift(newTransaction);
-                  localStorage.setItem(
-                    "transactions",
-                    JSON.stringify(transactions),
-                  );
-
-                  setRecentTransactions(transactions.slice(0, 4));
+                  // Update MongoDB
+                  const userPhone = localStorage.getItem("userPhone");
+                  await fetch("/api/add-money", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      phone: userPhone,
+                      amount: addAmount,
+                    }),
+                  });
 
                   alert(`$${addAmount} added successfully!`);
                   setLastUpdated(new Date().toLocaleString());

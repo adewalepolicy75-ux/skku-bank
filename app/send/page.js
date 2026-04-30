@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Bolt, ArrowLeft, Send, User, Coins, ArrowRight, CheckCircle } from "lucide-react";
-import BottomNav from "../components/BottomNav";
+import { Bolt, Home, Send, User, Coins, CheckCircle } from "lucide-react";
+import BottomNav from "../../components/BottomNav";
 
 export default function SendMoneyPage() {
   const router = useRouter();
@@ -47,40 +47,44 @@ export default function SendMoneyPage() {
         setReceiverName("");
       }
     };
-    
+
     const timeout = setTimeout(fetchReceiver, 500);
     return () => clearTimeout(timeout);
   }, [toPhone, userPhone]);
 
   const handleSend = async (e) => {
     e.preventDefault();
-    
+
     const sendAmount = parseFloat(amount);
-    
-    if (sendAmount > balance) {
-      alert("Insufficient balance!");
+    const currentBalance = parseFloat(localStorage.getItem("balance") || "0");
+
+    console.log("Current balance:", currentBalance);
+    console.log("Send amount:", sendAmount);
+
+    if (sendAmount > currentBalance) {
+      alert("Insufficient balance! You have $" + currentBalance);
       return;
     }
-    
+
     if (toPhone === userPhone) {
       alert("You cannot send money to yourself!");
       return;
     }
-    
+
     setLoading(true);
-    
-    const response = await fetch('/api/transfer-internal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+
+    const response = await fetch("/api/transfer-internal", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         fromPhone: userPhone,
         toPhone: toPhone,
-        amount: sendAmount
-      })
+        amount: sendAmount,
+      }),
     });
-    
+
     const data = await response.json();
-    
+
     if (data.success) {
       localStorage.setItem("balance", data.newBalance);
       setBalance(data.newBalance);
@@ -101,9 +105,15 @@ export default function SendMoneyPage() {
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Transfer Successful!</h2>
-          <p className="text-gray-600">You sent ${amount} to {receiverName || toPhone}</p>
-          <p className="text-sm text-gray-500 mt-4">Redirecting to dashboard...</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Transfer Successful!
+          </h2>
+          <p className="text-gray-600">
+            You sent ${amount} to {receiverName || toPhone}
+          </p>
+          <p className="text-sm text-gray-500 mt-4">
+            Redirecting to dashboard...
+          </p>
         </div>
       </div>
     );
@@ -118,10 +128,15 @@ export default function SendMoneyPage() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">Wire Transfer</span>
+              <span className="font-bold text-xl text-gray-900">
+                Wire Transfer
+              </span>
             </Link>
-            <Link href="/dashboard" className="text-gray-500 hover:text-blue-600">
-              <ArrowLeft className="w-5 h-5" />
+            <Link
+              href="/dashboard"
+              className="text-gray-500 hover:text-blue-600"
+            >
+              <Home className="w-5 h-5" />
             </Link>
           </div>
         </div>
@@ -135,10 +150,15 @@ export default function SendMoneyPage() {
                 <Send className="w-8 h-8 text-blue-600" />
               </div>
               <h1 className="text-2xl font-bold text-gray-900">Send Money</h1>
-              <p className="text-gray-600">Available balance: ${balance.toLocaleString()}</p>
+              <p className="text-gray-600">
+                Available balance: ${balance.toLocaleString()}
+              </p>
             </div>
 
-            <form onSubmit={handleSend} className="bg-white rounded-2xl shadow-xl p-8">
+            <form
+              onSubmit={handleSend}
+              className="bg-white rounded-2xl shadow-xl p-8"
+            >
               <div className="mb-6">
                 <label className="block text-gray-700 font-semibold mb-2">
                   Receiver's Phone Number
@@ -155,10 +175,9 @@ export default function SendMoneyPage() {
                   />
                 </div>
                 {receiverName && (
-                  <p className="text-xs text-green-600 mt-1">✓ Sending to: {receiverName}</p>
-                )}
-                {toPhone && toPhone !== userPhone && !receiverName && toPhone.length >= 10 && (
-                  <p className="text-xs text-red-600 mt-1">✗ User not found</p>
+                  <p className="text-xs text-green-600 mt-1">
+                    ✓ Sending to: {receiverName}
+                  </p>
                 )}
               </div>
 
