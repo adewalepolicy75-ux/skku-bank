@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Bolt, Home, ArrowLeft, Building, Banknote, Globe, Loader2 } from "lucide-react";
+import { Bolt, Home, ArrowLeft, Building, Banknote, Globe, Loader2, CheckCircle } from "lucide-react";
 import BottomNav from "../../components/BottomNav";
 
-const ukBanks = [
-  "Barclays", "HSBC UK", "Lloyds Bank", "NatWest", 
-  "Santander UK", "Bank of Scotland", "Royal Bank of Scotland",
-  "Nationwide", "TSB Bank", "Co-operative Bank", "Metro Bank"
+const nigerianBanks = [
+  "Access Bank", "Zenith Bank", "GTBank", "UBA", "First Bank", 
+  "FCMB", "Stanbic IBTC", "Union Bank", "Sterling Bank", 
+  "Wema Bank", "Fidelity Bank", "Polaris Bank", "Unity Bank",
+  "Keystone Bank", "Jaiz Bank", "Suntrust Bank","Opay Bank","Palmpay Bank"
 ];
 
 const usBanks = [
@@ -18,46 +19,90 @@ const usBanks = [
   "US Bank", "TD Bank", "Truist Bank", "HSBC USA"
 ];
 
+const ukBanks = [
+  "Barclays", "HSBC UK", "Lloyds Bank", "NatWest", 
+  "Santander UK", "Bank of Scotland", "Royal Bank of Scotland",
+  "Nationwide", "TSB Bank"
+];
+
 export default function TransferPage() {
   const router = useRouter();
-  const [selectedCountry, setSelectedCountry] = useState("uk");
+  const [selectedCountry, setSelectedCountry] = useState("nigeria");
   const [selectedBank, setSelectedBank] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [fetchingName, setFetchingName] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     const loggedIn = localStorage.getItem("isLoggedIn");
     if (!loggedIn) router.push("/login");
   }, [router]);
 
-  const banks = selectedCountry === "uk" ? ukBanks : usBanks;
-  const currencySymbol = selectedCountry === "uk" ? "£" : "$";
-  const currencyCode = selectedCountry === "uk" ? "GBP" : "USD";
+  const getBanks = () => {
+    switch(selectedCountry) {
+      case "nigeria": return nigerianBanks;
+      case "usa": return usBanks;
+      case "uk": return ukBanks;
+      default: return nigerianBanks;
+    }
+  };
+
+  const getCurrencySymbol = () => {
+    switch(selectedCountry) {
+      case "nigeria": return "₦";
+      case "usa": return "$";
+      case "uk": return "£";
+      default: return "$";
+    }
+  };
+
+  const getCurrencyCode = () => {
+    switch(selectedCountry) {
+      case "nigeria": return "NGN";
+      case "usa": return "USD";
+      case "uk": return "GBP";
+      default: return "USD";
+    }
+  };
+
+  const getCountryFlag = () => {
+    switch(selectedCountry) {
+      case "nigeria": return "🇳🇬";
+      case "usa": return "🇺🇸";
+      case "uk": return "🇬🇧";
+      default: return "🇳🇬";
+    }
+  };
 
   useEffect(() => {
-    if (accountNumber.length >= 8 && selectedBank) {
-      fetchAccountName();
-    } else {
-      setAccountName("");
-    }
-  }, [accountNumber, selectedBank]);
-
-  const fetchAccountName = async () => {
-    setFetchingName(true);
-    setAccountName("");
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const fetchAccountName = async () => {
+      if (accountNumber.length >= 10 && selectedBank) {
+        setFetchingName(true);
+        setAccountName("");
+        
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        const mockNames = {
+          nigeria: ["Adebayo Ogunlesi", "Ngozi Okonjo", "Aliko Dangote", "Femi Otedola"],
+          usa: ["John Smith", "Sarah Johnson", "Michael Brown", "Emily Davis"],
+          uk: ["James Wilson", "Emma Thompson", "David Beckham", "Kate Winslet"]
+        };
+        
+        const names = mockNames[selectedCountry];
+        const nameIndex = parseInt(accountNumber.slice(-2)) % names.length;
+        setAccountName(names[nameIndex]);
+        setFetchingName(false);
+      } else {
+        setAccountName("");
+      }
+    };
     
-    const names = selectedCountry === "uk" 
-      ? ["James Wilson", "Sarah Johnson", "David Brown", "Emma Davis"]
-      : ["John Smith", "Michael Brown", "Jessica Martinez", "Robert Jackson"];
-    
-    const nameIndex = parseInt(accountNumber.slice(-2)) % names.length;
-    setAccountName(names[nameIndex]);
-    setFetchingName(false);
-  };
+    const timeout = setTimeout(fetchAccountName, 500);
+    return () => clearTimeout(timeout);
+  }, [accountNumber, selectedBank, selectedCountry]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,11 +112,27 @@ export default function TransferPage() {
     }
     setLoading(true);
     setTimeout(() => {
-      alert(`Transfer of ${currencySymbol}${amount} to ${accountName} at ${selectedBank} was successful!`);
-      router.push("/dashboard");
-      setLoading(false);
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 2000);
     }, 1500);
   };
+
+  if (success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-white">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-10 h-10 text-green-600" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Transfer Successful!</h2>
+          <p className="text-gray-600">You sent {getCurrencySymbol()}{amount} to {accountName}</p>
+          <p className="text-sm text-gray-500 mt-4">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -100,24 +161,25 @@ export default function TransferPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-6">
+              {/* Country Selection */}
               <div className="mb-6">
                 <label className="block text-gray-700 font-semibold mb-2">Select Country</label>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <button
                     type="button"
                     onClick={() => {
-                      setSelectedCountry("uk");
+                      setSelectedCountry("nigeria");
                       setAccountName("");
                       setAccountNumber("");
                       setSelectedBank("");
                     }}
-                    className={`flex-1 py-3 rounded-xl font-semibold transition ${
-                      selectedCountry === "uk" 
-                        ? "bg-blue-600 text-white" 
+                    className={`flex-1 py-2 rounded-xl font-semibold transition ${
+                      selectedCountry === "nigeria" 
+                        ? "bg-green-600 text-white" 
                         : "bg-gray-100 text-gray-700"
                     }`}
                   >
-                    🇬🇧 United Kingdom
+                    🇳🇬 Nigeria
                   </button>
                   <button
                     type="button"
@@ -127,7 +189,7 @@ export default function TransferPage() {
                       setAccountNumber("");
                       setSelectedBank("");
                     }}
-                    className={`flex-1 py-3 rounded-xl font-semibold transition ${
+                    className={`flex-1 py-2 rounded-xl font-semibold transition ${
                       selectedCountry === "usa" 
                         ? "bg-blue-600 text-white" 
                         : "bg-gray-100 text-gray-700"
@@ -135,9 +197,26 @@ export default function TransferPage() {
                   >
                     🇺🇸 USA
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedCountry("uk");
+                      setAccountName("");
+                      setAccountNumber("");
+                      setSelectedBank("");
+                    }}
+                    className={`flex-1 py-2 rounded-xl font-semibold transition ${
+                      selectedCountry === "uk" 
+                        ? "bg-red-600 text-white" 
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    🇬🇧 UK
+                  </button>
                 </div>
               </div>
 
+              {/* Bank Selection */}
               <div className="mb-4">
                 <label className="block text-gray-700 font-semibold mb-2">Select Bank</label>
                 <select
@@ -150,12 +229,13 @@ export default function TransferPage() {
                   required
                 >
                   <option value="">Choose a bank</option>
-                  {banks.map((bank) => (
+                  {getBanks().map((bank) => (
                     <option key={bank} value={bank}>{bank}</option>
                   ))}
                 </select>
               </div>
 
+              {/* Account Number */}
               <div className="mb-4">
                 <label className="block text-gray-700 font-semibold mb-2">Account Number</label>
                 <div className="relative">
@@ -172,6 +252,7 @@ export default function TransferPage() {
                 </div>
               </div>
 
+              {/* Account Name - Auto fetched */}
               <div className="mb-6">
                 <label className="block text-gray-700 font-semibold mb-2">Account Name</label>
                 <div className="relative">
@@ -195,8 +276,11 @@ export default function TransferPage() {
                 )}
               </div>
 
+              {/* Amount */}
               <div className="mb-6">
-                <label className="block text-gray-700 font-semibold mb-2">Amount ({currencyCode})</label>
+                <label className="block text-gray-700 font-semibold mb-2">
+                  Amount ({getCurrencyCode()})
+                </label>
                 <div className="relative">
                   <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
@@ -204,7 +288,7 @@ export default function TransferPage() {
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-                    placeholder={`Enter amount in ${currencyCode}`}
+                    placeholder={`Enter amount in ${getCurrencyCode()}`}
                     required
                   />
                 </div>
@@ -225,7 +309,7 @@ export default function TransferPage() {
                     Processing...
                   </>
                 ) : (
-                  `Send ${currencySymbol}${amount || "0"}`
+                  `Send ${getCurrencySymbol()}${amount || "0"}`
                 )}
               </button>
             </form>
