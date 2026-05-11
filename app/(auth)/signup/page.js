@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Bolt, Home, Eye, EyeOff, Mail, Phone, User, Lock, ArrowRight, ArrowLeft, Shield } from "lucide-react";
+import { Bolt, Home, Eye, EyeOff, Shield } from "lucide-react";
 import FaceVerify from "../../../components/FaceVerify";
 
 export default function SignupPage() {
@@ -14,23 +14,36 @@ export default function SignupPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [showFaceRegister, setShowFaceRegister] = useState(false);
+  const [faceDescriptor, setFaceDescriptor] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setShowFaceRegister(true);
+  };
+
+  const handleFaceDescriptor = (descriptor) => {
+    setFaceDescriptor(descriptor);
+  };
+
+  const handleFaceRegistered = async () => {
+    setLoading(true);
 
     const response = await fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName, email, phone, password }),
+      body: JSON.stringify({ fullName, email, phone, password, faceDescriptor }),
     });
 
     const data = await response.json();
+    setLoading(false);
 
     if (data.success) {
       alert(`Account created! Your account number is ${data.user.accountNumber}`);
-      setShowFaceRegister(true);
+      router.push("/login");
     } else {
       alert(data.error);
+      setShowFaceRegister(false);
     }
   };
 
@@ -45,14 +58,18 @@ export default function SignupPage() {
                 <span className="text-white font-semibold">Register Your Face</span>
               </div>
             </div>
-            <FaceVerify
-              mode="register"
-              onVerified={() => {
-                alert("Face registered! You can now use face verification to login.");
-                router.push("/login");
-              }}
-              onBack={() => router.push("/login")}
-            />
+            {loading ? (
+              <div className="text-center p-8">
+                <p className="text-gray-600">Creating your account...</p>
+              </div>
+            ) : (
+              <FaceVerify
+                mode="register"
+                onFaceDescriptor={handleFaceDescriptor}
+                onVerified={handleFaceRegistered}
+                onBack={() => setShowFaceRegister(false)}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -68,9 +85,7 @@ export default function SignupPage() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">
-                Wire Transfer
-              </span>
+              <span className="font-bold text-xl text-gray-900">Wire Transfer</span>
             </Link>
             <Link href="/" className="text-gray-500 hover:text-blue-600">
               <Home className="w-5 h-5" />
@@ -83,21 +98,12 @@ export default function SignupPage() {
         <div className="container mx-auto px-6">
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">
-                Create an account
-              </h1>
-              <p className="text-gray-600">
-                Join Wire Transfer and start your journey
-              </p>
+              <h1 className="text-3xl font-bold text-gray-900">Create an account</h1>
+              <p className="text-gray-600">Join Wire Transfer and start your journey</p>
             </div>
-            <form
-              onSubmit={handleSubmit}
-              className="bg-white rounded-2xl shadow-xl p-8"
-            >
+            <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8">
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Full Name
-                </label>
+                <label className="block text-gray-700 font-semibold mb-2">Full Name</label>
                 <input
                   type="text"
                   value={fullName}
@@ -107,9 +113,7 @@ export default function SignupPage() {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Email
-                </label>
+                <label className="block text-gray-700 font-semibold mb-2">Email</label>
                 <input
                   type="email"
                   value={email}
@@ -119,9 +123,7 @@ export default function SignupPage() {
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Phone
-                </label>
+                <label className="block text-gray-700 font-semibold mb-2">Phone</label>
                 <input
                   type="tel"
                   value={phone}
@@ -131,9 +133,7 @@ export default function SignupPage() {
                 />
               </div>
               <div className="mb-6">
-                <label className="block text-gray-700 font-semibold mb-2">
-                  Password
-                </label>
+                <label className="block text-gray-700 font-semibold mb-2">Password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -155,7 +155,7 @@ export default function SignupPage() {
                 type="submit"
                 className="w-full bg-blue-600 text-white py-3 rounded-xl font-semibold"
               >
-                Create Account
+                Continue to Face Registration
               </button>
               <p className="text-center text-gray-600 mt-6">
                 Already have an account?{" "}

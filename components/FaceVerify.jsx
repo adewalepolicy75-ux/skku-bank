@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
+export default function FaceVerify({ onVerified, onBack, mode = "login", email, onFaceDescriptor }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -62,7 +62,6 @@ export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
     setStatus("processing");
     setMessage("Scanning face...");
 
-    // Try multiple times with lower score threshold
     let detection = null;
     for (let i = 0; i < 5; i++) {
       detection = await faceapi
@@ -70,7 +69,7 @@ export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
           videoRef.current,
           new faceapi.TinyFaceDetectorOptions({
             inputSize: 320,
-            scoreThreshold: 0.3, // lowered from default 0.5
+            scoreThreshold: 0.3,
           })
         )
         .withFaceLandmarks()
@@ -89,30 +88,29 @@ export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
     const descriptor = Array.from(detection.descriptor);
 
     if (mode === "register") {
-      localStorage.setItem("faceDescriptor", JSON.stringify(descriptor));
+      // Pass descriptor up to parent to save with signup
       stopCamera();
-      setMessage("Face registered successfully!");
+      setMessage("Face captured!");
       setStatus("success");
-      setTimeout(() => onVerified(true), 1500);
+      onFaceDescriptor(descriptor);
+      setTimeout(() => onVerified(true), 1000);
     } else {
-      const saved = localStorage.getItem("faceDescriptor");
-      if (!saved) {
-        setMessage("No face registered. Please sign up first.");
-        setStatus("error");
-        return;
-      }
+      // Verify against database
+      const response = await fetch("/api/verify-face", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, faceDescriptor: descriptor }),
+      });
 
-      const savedDescriptor = new Float32Array(JSON.parse(saved));
-      const distance = faceapi.euclideanDistance(descriptor, Array.from(savedDescriptor));
-      console.log("Face distance:", distance);
+      const data = await response.json();
 
-      if (distance < 0.7) {
+      if (data.success) {
         stopCamera();
         setMessage("Face verified!");
         setStatus("success");
         setTimeout(() => onVerified(true), 1500);
       } else {
-        setMessage(`Not recognized (${distance.toFixed(2)}). Try better lighting or re-register.`);
+        setMessage(data.error || "Face not recognized. Try again.");
         setStatus("ready");
       }
     }
@@ -154,7 +152,7 @@ export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
 
       {status === "success" && (
         <div className="text-green-600 font-semibold text-lg">
-          {mode === "register" ? "✅ Registered!" : "✅ Verified!"}
+          {mode === "register" ? "✅ Face Captured!" : "✅ Verified!"}
         </div>
       )}
 

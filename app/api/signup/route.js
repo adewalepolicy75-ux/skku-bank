@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 
 export async function POST(request) {
   try {
-    const { fullName, email, phone, password } = await request.json();
+    const { fullName, email, phone, password, faceDescriptor } = await request.json();
 
     const client = await clientPromise;
     const db = client.db("wire_transfer_bank");
@@ -24,6 +24,7 @@ export async function POST(request) {
       email,
       phone,
       password: hashedPassword,
+      faceDescriptor: faceDescriptor || null,
       balance: 0,
       createdAt: new Date(),
       accountNumber: phone,
