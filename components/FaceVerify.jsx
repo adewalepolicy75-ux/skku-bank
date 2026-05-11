@@ -39,8 +39,8 @@ export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
             setStatus("ready");
             setMessage(
               mode === "register"
-                ? "Position your face and click Register"
-                : "Position your face and click Verify"
+                ? "Position your face in the oval and click Register"
+                : "Position your face in the oval and click Verify"
             );
           }).catch((err) => {
             console.warn("Play error:", err.message);
@@ -62,13 +62,26 @@ export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
     setStatus("processing");
     setMessage("Scanning face...");
 
-    const detection = await faceapi
-      .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
-      .withFaceLandmarks()
-      .withFaceDescriptor();
+    // Try multiple times with lower score threshold
+    let detection = null;
+    for (let i = 0; i < 5; i++) {
+      detection = await faceapi
+        .detectSingleFace(
+          videoRef.current,
+          new faceapi.TinyFaceDetectorOptions({
+            inputSize: 320,
+            scoreThreshold: 0.3, // lowered from default 0.5
+          })
+        )
+        .withFaceLandmarks()
+        .withFaceDescriptor();
+
+      if (detection) break;
+      await new Promise((r) => setTimeout(r, 300));
+    }
 
     if (!detection) {
-      setMessage("No face detected. Make sure your face is visible.");
+      setMessage("No face detected. Ensure good lighting and face the camera directly.");
       setStatus("ready");
       return;
     }
@@ -84,23 +97,22 @@ export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
     } else {
       const saved = localStorage.getItem("faceDescriptor");
       if (!saved) {
-        setMessage("No face registered. Please register first.");
+        setMessage("No face registered. Please sign up first.");
         setStatus("error");
         return;
       }
 
       const savedDescriptor = new Float32Array(JSON.parse(saved));
-      // Increased threshold from 0.5 to 0.65 for better recognition
       const distance = faceapi.euclideanDistance(descriptor, Array.from(savedDescriptor));
       console.log("Face distance:", distance);
 
-      if (distance < 0.65) {
+      if (distance < 0.7) {
         stopCamera();
         setMessage("Face verified!");
         setStatus("success");
         setTimeout(() => onVerified(true), 1500);
       } else {
-        setMessage(`Face not recognized (score: ${distance.toFixed(2)}). Try better lighting.`);
+        setMessage(`Not recognized (${distance.toFixed(2)}). Try better lighting or re-register.`);
         setStatus("ready");
       }
     }
@@ -133,7 +145,7 @@ export default function FaceVerify({ onVerified, onBack, mode = "login" }) {
           className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition disabled:opacity-50"
         >
           {status === "processing"
-            ? "Scanning..."
+            ? "Scanning... please wait"
             : mode === "register"
             ? "Register Face"
             : "Verify Face"}
