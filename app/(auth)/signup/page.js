@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Bolt,Home, Eye, EyeOff, Mail, Phone, User, Lock, ArrowRight, ArrowLeft } from "lucide-react";
+import { Bolt, Home, Eye, EyeOff, Mail, Phone, User, Lock, ArrowRight, ArrowLeft, Shield } from "lucide-react";
+import FaceVerify from "../../../components/FaceVerify";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -12,25 +13,51 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [showFaceRegister, setShowFaceRegister] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const response = await fetch('/api/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fullName, email, phone, password })
+
+    const response = await fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName, email, phone, password }),
     });
-    
+
     const data = await response.json();
-    
+
     if (data.success) {
       alert(`Account created! Your account number is ${data.user.accountNumber}`);
-      router.push('/login');
+      setShowFaceRegister(true);
     } else {
       alert(data.error);
     }
   };
+
+  if (showFaceRegister) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-white py-12">
+        <div className="max-w-md w-full mx-4">
+          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="bg-orange-500 p-4 text-center">
+              <div className="flex items-center justify-center gap-2">
+                <Shield className="w-6 h-6 text-white" />
+                <span className="text-white font-semibold">Register Your Face</span>
+              </div>
+            </div>
+            <FaceVerify
+              mode="register"
+              onVerified={() => {
+                alert("Face registered! You can now use face verification to login.");
+                router.push("/login");
+              }}
+              onBack={() => router.push("/login")}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -107,13 +134,22 @@ export default function SignupPage() {
                 <label className="block text-gray-700 font-semibold mb-2">
                   Password
                 </label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-xl"
-                  required
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-xl pr-10"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-400"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
               </div>
               <button
                 type="submit"
@@ -123,10 +159,7 @@ export default function SignupPage() {
               </button>
               <p className="text-center text-gray-600 mt-6">
                 Already have an account?{" "}
-                <Link
-                  href="/login"
-                  className="text-blue-600 font-semibold hover:underline"
-                >
+                <Link href="/login" className="text-blue-600 font-semibold hover:underline">
                   Sign in
                 </Link>
               </p>

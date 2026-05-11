@@ -13,6 +13,7 @@
     "@prisma/client": "^5.0.0",
     "@tailwindcss/postcss": "^4.2.4",
     "bcryptjs": "^3.0.3",
+    "face-api.js": "^0.22.2",
     "lucide-react": "^1.8.0",
     "mongodb": "^7.2.0",
     "next": "^16.2.4",

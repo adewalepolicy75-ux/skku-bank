@@ -23,7 +23,9 @@ export default function Home() {
               <div className="bg-blue-600 w-8 h-8 rounded-xl flex items-center justify-center">
                 <Bolt className="w-5 h-5 text-white" />
               </div>
-              <span className="font-bold text-xl text-gray-900">Wire Transfer.</span>
+              <span className="font-bold text-xl text-gray-900">
+                Wire Transfer.
+              </span>
             </div>
             <div className="hidden md:flex gap-8 text-gray-600">
               <a href="#" className="hover:text-blue-600">
@@ -39,18 +41,18 @@ export default function Home() {
                 Help
               </a>
             </div>
-            <div className="flex gap-3">
+            <div className="pt-4 flex flex-row gap-3">
               <Link
                 href="/login"
-                className="text-gray-700 font-semibold hover:text-blue-600"
+                className="flex-1 text-center border border-gray-300 rounded-full py-2 font-semibold"
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                className="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-700"
+                className="flex-1 text-center bg-blue-600 text-white rounded-full py-2 font-semibold"
               >
-                Join Wire Transfer
+                Join 
               </Link>
             </div>
           </div>
@@ -71,8 +73,9 @@ export default function Home() {
               Get more with <span className="text-blue-600">Wire Transfer</span>
             </h1>
             <p className="text-gray-600 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
-              Earn 50 Wire Transfer Coins on your Tier 3 Wire Transfer account to unlock cashback,
-              discounts, budgeting, and more Premium rewards.
+              Earn 50 Wire Transfer Coins on your Tier 3 Wire Transfer account
+              to unlock cashback, discounts, budgeting, and more Premium
+              rewards.
             </p>
             <div className="flex flex-wrap gap-4 justify-center mb-8">
               <Link

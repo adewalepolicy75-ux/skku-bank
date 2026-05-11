@@ -1,4 +1,5 @@
 import clientPromise from "../../../lib/mongodb";
+import bcrypt from "bcryptjs";
 
 export async function POST(request) {
   try {
@@ -13,14 +14,16 @@ export async function POST(request) {
     if (!user) {
       return Response.json(
         { success: false, error: "User not found" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
-    if (user.password !== password) {
+    // Compare hashed password
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
       return Response.json(
         { success: false, error: "Invalid password" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -36,7 +39,7 @@ export async function POST(request) {
   } catch (error) {
     return Response.json(
       { success: false, error: error.message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }

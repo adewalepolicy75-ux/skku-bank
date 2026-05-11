@@ -1,4 +1,5 @@
 import clientPromise from "../../../lib/mongodb";
+import bcrypt from "bcryptjs";
 
 export async function POST(request) {
   try {
@@ -12,15 +13,17 @@ export async function POST(request) {
     if (existingUser) {
       return Response.json(
         { success: false, error: "User already exists" },
-        { status: 400 },
+        { status: 400 }
       );
     }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = {
       fullName,
       email,
       phone,
-      password,
+      password: hashedPassword,
       balance: 0,
       createdAt: new Date(),
       accountNumber: phone,
@@ -36,7 +39,7 @@ export async function POST(request) {
   } catch (error) {
     return Response.json(
       { success: false, error: error.message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
